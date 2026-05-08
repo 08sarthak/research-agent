@@ -6,8 +6,8 @@ import sys
 from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
-
 import gradio as gr
+from PIL import Image
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
 if str(ROOT_DIR) not in sys.path:
@@ -171,7 +171,7 @@ def build_ui() -> gr.Blocks:
             with gr.Column(scale=1):
                 image = gr.Image(
                     label="Skin image",
-                    type="filepath",
+                    type="pil",
                 )
 
                 gr.Markdown("### Symptoms")
