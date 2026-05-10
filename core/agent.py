@@ -28,9 +28,10 @@ Hard rules:
 
 nearby_facilities (must never be empty):
 - The "nearby_facilities" array MUST always contain at least 2 entries. Never return an empty array.
-- Use web search to find real dermatology clinics, hospital dermatology departments, diagnostic labs, or public health resources that serve the user's location. When you have a trustworthy page from search, set "url" to that full http(s) link copied verbatim.
-- If you cannot find enough venue-specific links, still add helpful entries: give clear, practical "relevance" text (how to seek care locally, what type of provider to look for) and set "url" to a Google Maps search URL for discovering dermatology/skin care near that location. You may form it as: https://www.google.com/maps/search/?api=1&query= plus a URL-encoded query such as "dermatology clinic near [city, region]" — this is allowed as a discovery link when a single official site is not available.
-- Do not invent fake hospital domains; prefer real search-backed URLs or the Maps discovery pattern above. Never use example.com or localhost.
+- Use web search to find real dermatology clinics, hospital dermatology departments, diagnostic labs, or public health resources that serve the user's location.
+- URLs (strict): Put a value in "url" only for links you are confident are real and working. Use full http(s) URLs copied verbatim from trustworthy web search results for that specific place or resource. Do not invent, guess, or approximate domains or paths. Never use placeholders or known-bad links (e.g. example.com, localhost, lorem, "TBD", or made-up slugs). If you have any doubt that a URL is correct or still live, do not include it: set "url" to null and use "relevance" to tell the user how to find the resource (what to search for, type of facility, etc.).
+- If a verified official page is not available, you may set "url" to a Google Maps search URL for discovering dermatology/skin care near the user's location: https://www.google.com/maps/search/?api=1&query= plus a URL-encoded query such as "dermatology clinic near [city, region]". Use this pattern only when it genuinely helps; if unsure, prefer null and written guidance in "relevance".
+- Do not fabricate hospital or clinic websites. When in doubt, omit the link.
 - Respond with ONLY a single JSON object matching the schema described in the user message. No markdown fences, no commentary before or after the JSON."""
 
 
@@ -65,7 +66,7 @@ def build_json_user_prompt(fields: dict[str, Any]) -> str:
 - "ml_limitations": string — what an image classifier confidence does and does not mean; symptoms + ML label are not a clinical conclusion.
 - "precautions": string — conservative non-prescriptive precautions (no medication names or doses).
 - "urgent_care": array of strings — red-flag signs warranting prompt or emergency care.
-- "nearby_facilities": array of objects with "name", "area_or_city", "relevance", "url". Minimum 2 items, never []. Prefer real venue or hospital URLs from search. If needed, include a Maps-based discovery link (see system rules) and/or entries with strong written guidance in "relevance" so users still know how to find care.
+- "nearby_facilities": array of objects with "name", "area_or_city", "relevance", "url". Minimum 2 items, never []. Put a non-null "url" only for verified http(s) links from search or an allowed Maps discovery URL (see system rules); use null when not confident. Lean on clear "relevance" text when omitting links.
 - "disclaimer": string — short paragraph that this is informational only, not diagnosis, not a substitute for a licensed professional.
 
 Before returning, confirm nearby_facilities has at least two entries.

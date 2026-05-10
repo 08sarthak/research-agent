@@ -1,8 +1,10 @@
-import torch
+import os
+from pathlib import Path
+
 import timm
+import torch
 from PIL import Image
 import torchvision.transforms as transforms
-import os
 
 # =========================
 # Classes
@@ -18,16 +20,21 @@ CLASS_NAMES = [
 ]
 
 # =========================
-# Model path
+# Model path: always client/best_model_s3.pth (next to this file — works on any machine)
 # =========================
-MODEL_PATH = r"D:\work(tryzent)\research-agent\client\best_model_s3.pth"
+MODEL_PATH = str(Path(__file__).resolve().parent / "best_model_s3.pth")
 
 # =========================
 # Load model (EfficientNet-B4)
 # =========================
+if not os.path.isfile(MODEL_PATH):
+    raise FileNotFoundError(
+        f"Model weights not found: {MODEL_PATH}\n"
+        "Place best_model_s3.pth in the client/ folder next to predict_disease.py."
+    )
 print("🔍 Loading model from:", MODEL_PATH)
 
-checkpoint = torch.load(MODEL_PATH, map_location='cpu')
+checkpoint = torch.load(MODEL_PATH, map_location="cpu", weights_only=False)
 
 # 👉 Create SAME model used in training
 model = timm.create_model(
